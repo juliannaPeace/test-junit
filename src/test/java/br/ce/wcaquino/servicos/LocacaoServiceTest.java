@@ -27,6 +27,8 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
+import br.ce.wcaquino.matchers.DiaSemanaMatchers;
+import br.ce.wcaquino.matchers.MatchersProprios;
 import br.ce.wcaquino.utils.DataUtils;
 
 public class LocacaoServiceTest {
@@ -47,7 +49,7 @@ public class LocacaoServiceTest {
 	@Test
 	public void deveAlugarFilme() throws Exception {
 		
-		Assume.assumeFalse(DataUtils.verificarDiaSemana(adicionarDias(new Date(), 3), Calendar.SATURDAY));
+		Assume.assumeFalse(DataUtils.verificarDiaSemana(adicionarDias(new Date(), 2), Calendar.SATURDAY));
 		
 		// cenario
 		Usuario usuario = new Usuario("Usuario 1");
@@ -154,7 +156,7 @@ public class LocacaoServiceTest {
 	@Test
 	public void naoDeveDevolverFilmeNoDomingo() throws FilmeSemEstoqueException, LocadoraException {
 		
-		Assume.assumeTrue(DataUtils.verificarDiaSemana(adicionarDias(new Date(), 3), Calendar.SATURDAY));
+		Assume.assumeTrue(DataUtils.verificarDiaSemana(adicionarDias(new Date(), 2), Calendar.SATURDAY));
 		
 		// canario
 		Usuario usuario = new Usuario("Usuario 1");
@@ -164,8 +166,10 @@ public class LocacaoServiceTest {
 		Locacao resultado = service.alugarFilme(usuario, filmes);
 
 		//verificacao
-		boolean ehDomingo = DataUtils.verificarDiaSemana(resultado.getDataRetorno(), Calendar.SUNDAY);
-		assertFalse(ehDomingo);
+//		boolean ehDomingo = DataUtils.verificarDiaSemana(resultado.getDataRetorno(), Calendar.SUNDAY);
+//		assertFalse(ehDomingo);
+//		assertThat(resultado.getDataRetorno(), new DiaSemanaMatchers(Calendar.MONDAY));
+		assertThat(resultado.getDataRetorno(), MatchersProprios.caiEm(Calendar.MONDAY));
 
 	}
 }
