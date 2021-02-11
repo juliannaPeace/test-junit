@@ -5,9 +5,7 @@ import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -27,7 +25,6 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
-import br.ce.wcaquino.matchers.DiaSemanaMatchers;
 import br.ce.wcaquino.matchers.MatchersProprios;
 import br.ce.wcaquino.utils.DataUtils;
 
@@ -42,14 +39,14 @@ public class LocacaoServiceTest {
 	public ExpectedException exception = ExpectedException.none();
 
 	@Before
-	public void setup() {
+	public void setup() {	
 		service = new LocacaoService();
 	}
 
 	@Test
 	public void deveAlugarFilme() throws Exception {
 		
-		Assume.assumeFalse(DataUtils.verificarDiaSemana(adicionarDias(new Date(), 2), Calendar.SATURDAY));
+//		Assume.assumeFalse(DataUtils.verificarDiaSemana(adicionarDias(new Date(), 2), Calendar.SATURDAY));
 		
 		// cenario
 		Usuario usuario = new Usuario("Usuario 1");
@@ -60,8 +57,10 @@ public class LocacaoServiceTest {
 
 		// verificacao
 		error.checkThat(locacao.getValor(), is(equalTo(5.0)));
-		error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-		error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+//		error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+		error.checkThat(locacao.getDataLocacao(), MatchersProprios.ehHoje());
+//		error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+		error.checkThat(locacao.getDataRetorno(), MatchersProprios.ehHojeComDiferencaDias(1));
 	}
 
 	@Test(expected = FilmeSemEstoqueException.class)
@@ -156,7 +155,7 @@ public class LocacaoServiceTest {
 	@Test
 	public void naoDeveDevolverFilmeNoDomingo() throws FilmeSemEstoqueException, LocadoraException {
 		
-		Assume.assumeTrue(DataUtils.verificarDiaSemana(adicionarDias(new Date(), 2), Calendar.SATURDAY));
+		Assume.assumeTrue(DataUtils.verificarDiaSemana(adicionarDias(new Date(), 2), Calendar.MONDAY));
 		
 		// canario
 		Usuario usuario = new Usuario("Usuario 1");

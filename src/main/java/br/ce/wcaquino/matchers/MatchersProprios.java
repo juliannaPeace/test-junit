@@ -6,4 +6,12 @@ public class MatchersProprios {
 		return new DiaSemanaMatchers(diaSemana);
 	}
 
+	
+	public static DataDiferencaDiasMacther ehHojeComDiferencaDias(Integer quantidadeDias) {
+		return new DataDiferencaDiasMacther(quantidadeDias);
+	}
+	
+	public static DataDiferencaDiasMacther ehHoje() {
+		return new DataDiferencaDiasMacther(0);
+	}
 }
